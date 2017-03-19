@@ -88,6 +88,15 @@ public class SPN {
 		return replaced.toString();
 	}
 	
+	//done by nicolas
+	private static String sbox(String x) {
+		StringBuilder replaced = new StringBuilder(x);
+		for(int i = 0; i < n; i++) {
+			replaced.replace(i*m, i*m+m, sBox.get(replaced.substring(i*m, i*m+m)));
+		}
+		return replaced.toString();
+	}
+	
 	public static String spn_decode(String y, String k) {
 		// initialer Weissschritt
 		String result = Bonustask.xor(y, calc_inverted_roundkey(k, 0));
@@ -103,6 +112,25 @@ public class SPN {
 		result = sbox_inverse(result);
 		// Rundenschlüsseladdition
 		result = Bonustask.xor(result, calc_inverted_roundkey(k, r));
+		return result;
+	}
+	
+	//Done by Nicolas
+	public static String spn_encode(String x, String k) {
+		// initialer Weissschritt
+		String result = Bonustask.xor(x, calc_roundkey(k, 0));
+		for(int i = 1; i < r; i++) {
+			// S-Box
+			result = sbox(result);
+			// permutate
+			result = permutate(result);
+			// xor mit roundkey
+			result = Bonustask.xor(result, calc_roundkey(k, i));
+		}
+		// S-Box
+		result = sbox(result);
+		// Rundenschlüsseladdition
+		result = Bonustask.xor(result, calc_roundkey(k, r));
 		return result;
 	}
 	
