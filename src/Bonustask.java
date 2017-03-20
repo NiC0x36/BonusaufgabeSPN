@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,19 +24,35 @@ public class Bonustask {
 	private static void launch_ctr() {
 		k = "00111010100101001101011000111111";
 		y = loadFile("data/chiffre.txt");
-		String[] yBlocks = makeBlocks(y, 16);
+		String[] yBlocks = makeBlocks(y, k.length() / 2);
+		System.out.println("Anzahl Zeichen: " + yBlocks.length);
+		System.out.println("Blocklength: " + yBlocks[0].length());
+
+		String[] blocksToDecode = Arrays.copyOfRange(yBlocks, 1, yBlocks.length);
+		String yMinus1 = yBlocks[0];
 		
-		String CTR_decoded = CTR.ctr_decode_mode(yBlocks, k, yBlocks[yBlocks.length - 1]);
-		System.out.println("Calc x:" + CTR_decoded);
+		String x_Calculated = CTR.ctr_decode_mode(blocksToDecode, k, yMinus1);
+		String CTR_decoded_clean = x_Calculated.substring(0, x_Calculated.lastIndexOf('1'));
 
-		System.out.println("\nTest y:"+y);
+		System.out.println("Calc x: " + CTR_decoded_clean);
+		System.out.println("\n"+binaryToAscii(CTR_decoded_clean));
+		System.out.println("\nTest y: " + y);
 
-		String CTR_encoded = CTR.ctr_encode_mode(makeBlocks(CTR_decoded, 16), k, yBlocks[yBlocks.length - 1]);
-		System.out.println("Calc y:" + CTR_encoded);
+		String y_Calculated = CTR.ctr_encode_mode(makeBlocks(x_Calculated, 16), k, yMinus1);
+		System.out.println("Calc y: " + y_Calculated);
 
-		if (CTR_encoded.equals(y)) {
+		if (y_Calculated.equals(y)) {
 			System.out.println("ALL SYSTEMS RUN");
 		}
+	}
+
+	private static String binaryToAscii(String cTR_decoded_clean) {
+		String text = "";
+		String[] byteBlocks = makeBlocks(cTR_decoded_clean, 8);
+		for (String string : byteBlocks) {
+			text += (char) Integer.parseInt(binaryPadding(string,8),2);
+		}
+		return text;
 	}
 
 	private static void test() {
@@ -95,4 +112,14 @@ public class Bonustask {
 		return result.toString();
 	}
 
+	// makes the adding for a l long binary number
+	public static String binaryPadding(String s, int l) {
+		String padding = "";
+		for (int i = 0; i < l; i++)
+			padding += "0";
+
+		String result = padding + s;
+		// take the right-most l digits
+		return result.substring(result.length() - l, result.length());
+	}
 }
