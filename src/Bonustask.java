@@ -27,7 +27,7 @@ public class Bonustask {
 		x = CTR.ctr_decode_mode(blocksToDecode, k, yMinus1);
 		String CTR_decoded_clean = x.substring(0, x.lastIndexOf('1'));
 
-		System.out.println("\n" + binaryToAscii(CTR_decoded_clean));
+		System.out.println(binaryToAscii(CTR_decoded_clean));
 
 		// To check if y_Calculated equals to y (loaded)
 		// String y_Calculated = CTR.ctr_encode_mode(makeBlocks(x_Calculated,
