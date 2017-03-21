@@ -11,6 +11,7 @@ public class SPN {
 	private static Map<String,String> inverted_sBox;
 	private static Map<Integer,Integer> bitPermutation;
 
+	// calulating the spn params (sBox / bitPermutation)
 	public static void calc_spn_params() {
 		sBox = new HashMap<>();
 		sBox.put("0000", "1110"); //0 - E
@@ -49,6 +50,7 @@ public class SPN {
 		bitPermutation.put(15, 15);
 	}
 	
+	// inverting the spn params
 	public static void calc_spn_reversed_params() {
 		inverted_sBox = new HashMap<>();
 		Set<String> keys = sBox.keySet();
@@ -57,6 +59,7 @@ public class SPN {
 		}
 	}
 	
+	// calculate the inverted roundkey
 	private static String calc_inverted_roundkey(String k, int round) {
 		if(round == 0 || round == r) {
 			return calc_roundkey(k, r-round);
@@ -64,6 +67,7 @@ public class SPN {
 		return permutate(calc_roundkey(k, r-round));
 	}
 	
+	// permutation
 	private static String permutate(String s) {
 		StringBuilder result = new StringBuilder(s);
 		for(int i = 0; i < n*m; i++) {
@@ -76,6 +80,7 @@ public class SPN {
 		return result.toString();
 	}
 	
+	// calculate the roundkey
 	private static String calc_roundkey(String k, int round) {
 		return k.substring(4*round, 4*round+16);
 	}
@@ -88,7 +93,6 @@ public class SPN {
 		return replaced.toString();
 	}
 	
-	//done by nicolas
 	private static String sbox(String x) {
 		StringBuilder replaced = new StringBuilder(x);
 		for(int i = 0; i < n; i++) {
@@ -115,7 +119,6 @@ public class SPN {
 		return result;
 	}
 	
-	//Done by Nicolas
 	public static String spn_encode(String x, String k) {
 		// initialer Weissschritt
 		String result = Bonustask.xor(x, calc_roundkey(k, 0));
